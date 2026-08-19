@@ -34,9 +34,8 @@ export function Nav() {
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2 group">
-          <span className="relative inline-flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-accent-400 to-violet-500 text-ink-950 font-bold">
-            Q
-            <span className="absolute -inset-0.5 rounded-md bg-gradient-to-br from-accent-400 to-violet-500 opacity-0 blur transition group-hover:opacity-50" />
+          <span className="relative inline-flex h-7 w-7 items-center justify-center overflow-hidden rounded-md">
+            <img src="/avatar.svg" alt="" className="h-7 w-7" />
           </span>
           <span className="font-medium tracking-wide">
             {me.name}

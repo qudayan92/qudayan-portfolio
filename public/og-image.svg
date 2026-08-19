@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05060a"/>
+      <stop offset="50%" stop-color="#0a0d14"/>
+      <stop offset="100%" stop-color="#161b2d"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#f0abfc"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a5f3fc"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#f0abfc"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+      <stop offset="60%" stop-color="#8b5cf6" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="100%" cy="100%" r="50%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- 网格 -->
+  <g opacity="0.05" stroke="#ffffff" stroke-width="0.6">
+    <line x1="0" y1="78.75" x2="1200" y2="78.75"/>
+    <line x1="0" y1="157.5" x2="1200" y2="157.5"/>
+    <line x1="0" y1="236.25" x2="1200" y2="236.25"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="393.75" x2="1200" y2="393.75"/>
+    <line x1="0" y1="472.5" x2="1200" y2="472.5"/>
+    <line x1="0" y1="551.25" x2="1200" y2="551.25"/>
+    <line x1="150" y1="0" x2="150" y2="630"/>
+    <line x1="300" y1="0" x2="300" y2="630"/>
+    <line x1="450" y1="0" x2="450" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="750" y1="0" x2="750" y2="630"/>
+    <line x1="900" y1="0" x2="900" y2="630"/>
+    <line x1="1050" y1="0" x2="1050" y2="630"/>
+  </g>
+
+  <!-- 光晕 -->
+  <ellipse cx="200" cy="315" rx="500" ry="400" fill="url(#glow)"/>
+  <ellipse cx="1100" cy="630" rx="400" ry="300" fill="url(#glow2)"/>
+
+  <!-- 左侧：Monogram -->
+  <g transform="translate(140, 195)">
+    <!-- 外圈 -->
+    <circle cx="110" cy="110" r="108" fill="none" stroke="url(#ring)" stroke-width="2" opacity="0.5"/>
+    <!-- 内圆 -->
+    <circle cx="110" cy="110" r="90" fill="#05060a" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <!-- Q -->
+    <circle cx="110" cy="110" r="52" fill="none" stroke="url(#textGrad)" stroke-width="10" stroke-linecap="round"/>
+    <line x1="143" y1="143" x2="170" y2="170" stroke="url(#textGrad)" stroke-width="10" stroke-linecap="round"/>
+    <!-- 顶部光点 -->
+    <circle cx="110" cy="2" r="2.5" fill="#22d3ee"/>
+    <!-- 底部装饰 -->
+    <g transform="translate(20, 215)" opacity="0.6">
+      <rect x="0" y="0" width="4" height="10" fill="#a5f3fc"/>
+      <rect x="0" y="0" width="10" height="4" fill="#a5f3fc"/>
+    </g>
+    <g transform="translate(170, 215)" opacity="0.6">
+      <circle cx="0" cy="5" r="2" fill="#a78bfa"/>
+      <circle cx="7" cy="5" r="2" fill="#a78bfa" opacity="0.6"/>
+      <circle cx="14" cy="5" r="2" fill="#a78bfa" opacity="0.3"/>
+    </g>
+  </g>
+
+  <!-- 右侧：内容区 -->
+  <g transform="translate(460, 0)">
+    <!-- Eyebrow -->
+    <g transform="translate(0, 220)">
+      <circle cx="0" cy="0" r="4" fill="#22d3ee"/>
+      <text x="14" y="6" font-family="ui-monospace, SFMono-Regular, monospace" font-size="18" fill="#a5f3fc" letter-spacing="3">PRODUCT MANAGER · SHENZHEN</text>
+    </g>
+
+    <!-- 主标题 -->
+    <text x="0" y="310" font-family="ui-sans-serif, system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="92" font-weight="700" fill="#ffffff" letter-spacing="-2">瞿达炎</text>
+
+    <!-- 渐变副标题 -->
+    <text x="0" y="395" font-family="ui-sans-serif, system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="38" font-weight="500" fill="url(#textGrad)">用设计师的眼睛做产品</text>
+
+    <!-- 描述 -->
+    <text x="0" y="455" font-family="ui-sans-serif, system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" fill="rgba(212,212,216,0.9)">9 年互联网产品 / 设计经验 · 智能家居 · IoT · AIGC</text>
+
+    <!-- 底部 chip 行 -->
+    <g transform="translate(0, 510)">
+      <!-- Chip 1 -->
+      <rect x="0" y="0" width="110" height="38" rx="19" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+      <text x="55" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#a5f3fc" text-anchor="middle">智能家居</text>
+
+      <!-- Chip 2 -->
+      <rect x="124" y="0" width="90" height="38" rx="19" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+      <text x="169" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#a78bfa" text-anchor="middle">IoT</text>
+
+      <!-- Chip 3 -->
+      <rect x="228" y="0" width="110" height="38" rx="19" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+      <text x="283" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#f0abfc" text-anchor="middle">AIGC</text>
+
+      <!-- Chip 4 -->
+      <rect x="352" y="0" width="100" height="38" rx="19" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+      <text x="402" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#a5f3fc" text-anchor="middle">Figma</text>
+    </g>
+  </g>
+
+  <!-- 右上角小标签 -->
+  <g transform="translate(1080, 60)" opacity="0.7">
+    <text x="0" y="0" font-family="ui-monospace, monospace" font-size="14" fill="#71717a" text-anchor="end">qudayan.com</text>
+  </g>
+
+  <!-- 左下角版本号 -->
+  <g transform="translate(60, 580)" opacity="0.5">
+    <text x="0" y="0" font-family="ui-monospace, monospace" font-size="12" fill="#71717a">v0.1 · 2026</text>
+  </g>
+</svg>

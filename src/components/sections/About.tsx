@@ -32,7 +32,19 @@ export function About() {
           </div>
 
           <aside className="glass rounded-2xl p-6 md:p-8">
-            <p className="eyebrow">Education · 教育</p>
+            <div className="flex items-center gap-4">
+              <img
+                src="/avatar.svg"
+                alt="瞿达炎"
+                className="h-20 w-20 rounded-2xl ring-1 ring-white/10"
+              />
+              <div>
+                <div className="text-lg font-medium text-white">瞿达炎</div>
+                <div className="text-xs text-neutral-500 mt-0.5">PM · 深圳</div>
+              </div>
+            </div>
+
+            <p className="eyebrow mt-8">Education · 教育</p>
             <h3 className="mt-3 text-lg font-medium text-white">
               {education.school}
             </h3>

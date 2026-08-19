@@ -28,11 +28,20 @@ export const metadata: Metadata = {
     description: '用设计师的眼睛做产品，用工程师的脑子做决策。',
     type: 'website',
     locale: 'zh_CN',
+    images: [
+      {
+        url: '/og-image.svg',
+        width: 1200,
+        height: 630,
+        alt: '瞿达炎 · 产品经理',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: '瞿达炎 · 产品经理',
     description: '用设计师的眼睛做产品，用工程师的脑子做决策。',
+    images: ['/og-image.svg'],
   },
   robots: {
     index: true,
