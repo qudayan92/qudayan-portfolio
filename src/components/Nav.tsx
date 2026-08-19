@@ -9,6 +9,7 @@ const links = [
   { href: '/', label: 'Home' },
   { href: '/#experience', label: '经历' },
   { href: '/#projects', label: '项目' },
+  { href: '/#ai-lab', label: 'AI Lab' },
   { href: '/blog', label: '笔记' },
   { href: '/#contact', label: '联系' },
 ];

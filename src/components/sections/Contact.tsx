@@ -1,4 +1,5 @@
 import { me } from '@/lib/profile';
+import { ContactForm } from '@/components/ai/ContactForm';
 
 export function Contact() {
   return (
@@ -65,6 +66,10 @@ export function Contact() {
               <div className="text-white">全职 · 现场</div>
             </div>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <ContactForm />
         </div>
       </div>
     </section>

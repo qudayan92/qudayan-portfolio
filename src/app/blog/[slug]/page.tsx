@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getAllPosts, getPostBySlug } from '@/lib/blog';
+import { Markdown } from '@/components/Markdown';
 
 export async function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -52,8 +52,32 @@ export default function PostPage({
         </header>
 
         <div className="prose-custom mt-10">
-          <MDXRemote source={post.content} />
+          <Markdown source={post.content} />
         </div>
+
+        {post.aiSummary && (
+          <aside className="mt-16 rounded-2xl border border-accent-400/20 bg-accent-400/[0.04] p-6">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-accent-200 uppercase tracking-widest">AI · 一句话</span>
+            </div>
+            <p className="mt-3 text-base text-neutral-100 leading-relaxed">
+              {post.aiSummary}
+            </p>
+            {post.aiQuestions && post.aiQuestions.length > 0 && (
+              <>
+                <p className="mt-6 text-xs font-mono text-neutral-500 uppercase tracking-widest">值得继续想</p>
+                <ul className="mt-3 space-y-2">
+                  {post.aiQuestions.map((q, i) => (
+                    <li key={i} className="flex gap-2 text-sm text-neutral-300">
+                      <span className="text-accent-400">→</span>
+                      <span>{q}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </aside>
+        )}
       </div>
 
       <style>{`
@@ -71,6 +95,7 @@ export default function PostPage({
         .prose-custom blockquote { border-left: 3px solid rgb(139 92 246); padding-left: 1rem; color: rgb(212 212 216); margin: 1.5rem 0; font-style: italic; }
         .prose-custom hr { border-color: rgba(255,255,255,0.08); margin: 2rem 0; }
         .prose-custom strong { color: white; font-weight: 600; }
+        .prose-custom em { color: rgb(212 212 216); }
       `}</style>
     </article>
   );

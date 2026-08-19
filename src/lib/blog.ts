@@ -9,6 +9,8 @@ export type BlogFrontmatter = {
   date: string; // ISO
   tags?: string[];
   draft?: boolean;
+  aiSummary?: string;
+  aiQuestions?: string[];
 };
 
 export type BlogPost = BlogFrontmatter & {
