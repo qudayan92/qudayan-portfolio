@@ -21,6 +21,20 @@ export type BlogPost = BlogFrontmatter & {
 };
 
 const BLOG_DIR = path.join(process.cwd(), 'src', 'content', 'blog');
+const AI_SUMMARIES_PATH = path.join(process.cwd(), 'src', 'lib', 'ai-summaries.json');
+
+type AiSummaryCache = Record<string, { summary: string; questions: string[] }>;
+
+function loadAiSummaries(): AiSummaryCache {
+  try {
+    if (fs.existsSync(AI_SUMMARIES_PATH)) {
+      return JSON.parse(fs.readFileSync(AI_SUMMARIES_PATH, 'utf8')) as AiSummaryCache;
+    }
+  } catch {
+    // ignore
+  }
+  return {};
+}
 
 function listFiles(): string[] {
   if (!fs.existsSync(BLOG_DIR)) return [];
@@ -32,17 +46,22 @@ function listFiles(): string[] {
 
 export function getAllPosts(): BlogPost[] {
   const files = listFiles();
+  const aiSummaries = loadAiSummaries();
   const posts: BlogPost[] = files.map((file) => {
     const slug = file.replace(/\.mdx?$/, '');
     const raw = fs.readFileSync(path.join(BLOG_DIR, file), 'utf8');
     const { data, content } = matter(raw);
     const fm = data as BlogFrontmatter;
     const rt = readingTime(content);
+    const ai = aiSummaries[slug];
     return {
       ...fm,
       slug,
       content,
       readingTime: rt.text,
+      // 优先用 JSON 缓存里的 AI 摘要，其次 frontmatter，其次手填 summary
+      aiSummary: ai?.summary || fm.aiSummary,
+      aiQuestions: ai?.questions || fm.aiQuestions,
     };
   });
 
@@ -59,11 +78,15 @@ export function getPostBySlug(slug: string): BlogPost | null {
   const raw = fs.readFileSync(target, 'utf8');
   const { data, content } = matter(raw);
   const rt = readingTime(content);
+  const ai = loadAiSummaries()[slug];
+  const fm = data as BlogFrontmatter;
   return {
-    ...(data as BlogFrontmatter),
+    ...fm,
     slug,
     content,
     readingTime: rt.text,
+    aiSummary: ai?.summary || fm.aiSummary,
+    aiQuestions: ai?.questions || fm.aiQuestions,
   };
 }
 

@@ -1,9 +1,14 @@
-// DeepSeek API 客户端封装
-// 兼容 OpenAI Chat Completions 协议
+// LLM API 客户端封装（OpenAI 兼容协议）
+// 默认接入 Agnes AI，可通过环境变量切换到任意 OpenAI 兼容平台：
+//   LLM_API_BASE_URL   - 默认 https://apihub.agnes-ai.com/v1
+//   LLM_API_KEY        - 默认读 DEEPSEEK_API_KEY（向后兼容）
+//   LLM_MODEL          - 默认 agnes-2.5-flash
 // API_KEY 只在服务端使用（never exposed to client）
 
-const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
-const DEEPSEEK_MODEL = 'deepseek-chat';
+const LLM_API_BASE_URL =
+  process.env.LLM_API_BASE_URL || 'https://apihub.agnes-ai.com/v1';
+const LLM_API_URL = `${LLM_API_BASE_URL.replace(/\/$/, '')}/chat/completions`;
+const LLM_MODEL = process.env.LLM_MODEL || 'agnes-2.5-flash';
 
 export type ChatMessage = {
   role: 'system' | 'user' | 'assistant';
@@ -23,7 +28,7 @@ export type ChatChunk = {
 };
 
 function getApiKey(): string {
-  const key = process.env.DEEPSEEK_API_KEY;
+  const key = process.env.LLM_API_KEY || process.env.DEEPSEEK_API_KEY;
   if (!key) {
     throw new Error('AI_NOT_CONFIGURED');
   }
@@ -33,14 +38,14 @@ function getApiKey(): string {
 // 非流式调用
 export async function chat(options: ChatOptions): Promise<string> {
   const { messages, temperature = 0.7, maxTokens = 1024 } = options;
-  const response = await fetch(DEEPSEEK_API_URL, {
+  const response = await fetch(LLM_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${getApiKey()}`,
     },
     body: JSON.stringify({
-      model: DEEPSEEK_MODEL,
+      model: LLM_MODEL,
       messages,
       temperature,
       max_tokens: maxTokens,
@@ -50,7 +55,7 @@ export async function chat(options: ChatOptions): Promise<string> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`DeepSeek API error ${response.status}: ${errorText}`);
+    throw new Error(`LLM API error ${response.status}: ${errorText}`);
   }
 
   const data = await response.json();
@@ -60,14 +65,14 @@ export async function chat(options: ChatOptions): Promise<string> {
 // 流式调用 - 返回一个 async generator
 export async function* chatStream(options: ChatOptions): AsyncGenerator<ChatChunk, void, void> {
   const { messages, temperature = 0.7, maxTokens = 1024 } = options;
-  const response = await fetch(DEEPSEEK_API_URL, {
+  const response = await fetch(LLM_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${getApiKey()}`,
     },
     body: JSON.stringify({
-      model: DEEPSEEK_MODEL,
+      model: LLM_MODEL,
       messages,
       temperature,
       max_tokens: maxTokens,

@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
         { role: 'user', content: userPrompt },
       ],
       temperature: 0.9,
-      maxTokens: 800,
+      maxTokens: 2000,
     });
 
     // 容错：尝试从 result 里抽出 JSON 数组
@@ -70,7 +70,9 @@ export async function POST(req: NextRequest) {
     try {
       ideas = JSON.parse(result);
     } catch {
-      const m = result.match(/\[[\s\S]*\]/);
+      // 剥离 ```json 代码块标记
+      const cleaned = result.replace(/```json/g, '').replace(/```/g, '').trim();
+      const m = cleaned.match(/\[[\s\S]*\]/);
       ideas = m ? JSON.parse(m[0]) : [];
     }
     if (!Array.isArray(ideas)) ideas = [];

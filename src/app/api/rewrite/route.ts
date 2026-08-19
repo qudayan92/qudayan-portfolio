@@ -52,7 +52,7 @@ ${text}
               { role: 'user', content: userPrompt },
             ],
             temperature: 0.5,
-            maxTokens: 500,
+            maxTokens: 800,
           })) {
             if (chunk.content) {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: chunk.content })}\n\n`));

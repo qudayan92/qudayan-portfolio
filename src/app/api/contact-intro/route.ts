@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         { role: 'user', content: userPrompt },
       ],
       temperature: 0.7,
-      maxTokens: 300,
+      maxTokens: 800,
     });
 
     return Response.json({ message: result.trim() });

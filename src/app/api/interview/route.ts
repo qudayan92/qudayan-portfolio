@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
           for await (const chunk of chatStream({
             messages,
             temperature: 0.8,
-            maxTokens: 400,
+            maxTokens: 800,
           })) {
             if (chunk.content) {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: chunk.content })}\n\n`));

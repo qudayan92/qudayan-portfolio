@@ -31,15 +31,48 @@ export async function POST(req: NextRequest) {
         { role: 'user', content: `标题：${title}\n\n正文：\n${content.slice(0, 4000)}` },
       ],
       temperature: 0.5,
-      maxTokens: 400,
+      maxTokens: 1200,
     });
 
     let summary;
     try {
       summary = JSON.parse(result);
     } catch {
-      const m = result.match(/\{[\s\S]*\}/);
-      summary = m ? JSON.parse(m[0]) : { summary: '', questions: [] };
+      // 剥离 ```json 代码块标记
+      const cleaned = result.replace(/```json/g, '').replace(/```/g, '').trim();
+      const m = cleaned.match(/\{[\s\S]*\}/);
+      if (m) {
+        try {
+          summary = JSON.parse(m[0]);
+        } catch {
+          summary = { summary: '', questions: [] };
+        }
+      } else {
+        summary = { summary: '', questions: [] };
+      }
+    }
+    if (!summary || typeof summary !== 'object') summary = { summary: '', questions: [] };
+
+    // 如果结果是空（推理模型偶发：content 为空），重试一次
+    if (!summary.summary) {
+      try {
+        const retry = await chat({
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: `标题：${title}\n\n正文：\n${content.slice(0, 3000)}` },
+          ],
+          temperature: 0.3,
+          maxTokens: 1500,
+        });
+        const cleanedRetry = retry.replace(/```json/g, '').replace(/```/g, '').trim();
+        const mRetry = cleanedRetry.match(/\{[\s\S]*\}/);
+        if (mRetry) {
+          const parsedRetry = JSON.parse(mRetry[0]);
+          if (parsedRetry?.summary) summary = parsedRetry;
+        }
+      } catch {
+        // 重试失败，保持空结果（前端会显示手填 summary 降级）
+      }
     }
 
     return Response.json(summary);
