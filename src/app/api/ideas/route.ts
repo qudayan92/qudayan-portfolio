@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { chat, checkRateLimit } from '@/lib/deepseek';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const PROFILE = `
 # 作者

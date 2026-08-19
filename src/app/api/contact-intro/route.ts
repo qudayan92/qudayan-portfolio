@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { chat, checkRateLimit, detectInjection } from '@/lib/deepseek';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const SYSTEM_PROMPT = `你是「瞿达炎」的个人助理，帮访问者起草一段破冰/自我介绍消息，用来发给瞿达炎。
 

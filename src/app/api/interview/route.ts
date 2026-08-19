@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { chatStream, checkRateLimit, detectInjection } from '@/lib/deepseek';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const RESUME_CONTEXT = `
 # 候选人简历

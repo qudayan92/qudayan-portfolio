@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { chat } from '@/lib/deepseek';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const SYSTEM_PROMPT = `你是「瞿达炎」的博客 AI 编辑，为一篇博文生成：
 1. 一句话核心摘要（中文，30 字以内）
