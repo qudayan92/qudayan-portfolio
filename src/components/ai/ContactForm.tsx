@@ -36,6 +36,8 @@ export function ContactForm() {
     }
   };
 
+  const isUnavailable = error?.includes('AI 功能暂未启用');
+
   return (
     <div className="glass rounded-2xl p-6 md:p-8">
       <div className="flex items-center gap-2 mb-1">
@@ -87,7 +89,18 @@ export function ContactForm() {
         )}
       </div>
 
-      {error && <p className="mt-3 text-sm text-rose-400">{error}</p>}
+      {error && (
+        <div className={`mt-3 rounded-lg border p-3 text-sm ${
+          isUnavailable
+            ? 'border-amber-400/30 bg-amber-400/[0.04] text-amber-200'
+            : 'border-rose-400/30 bg-rose-400/[0.04] text-rose-300'
+        }`}>
+          <div className="font-medium mb-0.5">
+            {isUnavailable ? '⏸ AI 暂未启用' : '✗ 出错了'}
+          </div>
+          <p className="text-xs opacity-90">{error}</p>
+        </div>
+      )}
 
       {generated && (
         <div className="mt-5 rounded-lg border border-accent-400/20 bg-accent-400/[0.04] p-4">

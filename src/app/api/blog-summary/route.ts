@@ -44,6 +44,13 @@ export async function POST(req: NextRequest) {
 
     return Response.json(summary);
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'internal_error' }), { status: 500 });
+    const msg = err instanceof Error ? err.message : '';
+    if (msg === 'AI_NOT_CONFIGURED') {
+      return Response.json(
+        { error: 'AI_NOT_CONFIGURED', summary: '', questions: [] },
+        { status: 503 }
+      );
+    }
+    return Response.json({ error: 'internal_error', summary: '', questions: [] }, { status: 500 });
   }
 }

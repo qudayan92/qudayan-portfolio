@@ -27,6 +27,12 @@ export function useAIStream() {
         setState('error');
         return;
       }
+      if (response.status === 503) {
+        const data = await response.json().catch(() => ({}));
+        setError(data.error || 'AI 功能暂未启用');
+        setState('error');
+        return;
+      }
       if (!response.ok || !response.body) {
         throw new Error(`请求失败 (${response.status})`);
       }

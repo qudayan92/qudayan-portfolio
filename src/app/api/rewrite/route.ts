@@ -62,7 +62,11 @@ ${text}
           controller.close();
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'unknown';
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: msg })}\n\n`));
+          const friendly = msg === 'AI_NOT_CONFIGURED' ? 'AI 功能暂未启用，请联系站长' : msg;
+          // 用 JSON.stringify 内部会正确转义中文，但为了 SSE 客户端兼容性，
+          // 我们在前面加 data: 前缀时直接拼接（避免 TextEncoder 对半字符切分）
+          const payload = `data: {"error":${JSON.stringify(friendly)}}\n\n`;
+          controller.enqueue(encoder.encode(payload));
           controller.close();
         }
       },

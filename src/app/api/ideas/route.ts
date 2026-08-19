@@ -77,6 +77,14 @@ export async function POST(req: NextRequest) {
 
     return Response.json({ ideas });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'internal_error' }), { status: 500 });
+    const msg = err instanceof Error ? err.message : '';
+    // 当 AI 未配置时，返回 503 而不是 500，让前端区分"暂不可用"vs"真的坏了"
+    if (msg === 'AI_NOT_CONFIGURED') {
+      return Response.json(
+        { error: 'AI 功能暂未启用，请联系站长配置 API Key 后再试' },
+        { status: 503 }
+      );
+    }
+    return Response.json({ error: '服务暂时不可用，请稍后重试' }, { status: 500 });
   }
 }

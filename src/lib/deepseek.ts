@@ -25,7 +25,7 @@ export type ChatChunk = {
 function getApiKey(): string {
   const key = process.env.DEEPSEEK_API_KEY;
   if (!key) {
-    throw new Error('DEEPSEEK_API_KEY is not configured');
+    throw new Error('AI_NOT_CONFIGURED');
   }
   return key;
 }

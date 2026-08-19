@@ -93,7 +93,8 @@ export async function POST(req: NextRequest) {
           controller.close();
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'unknown';
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: msg })}\n\n`));
+          const friendly = msg === 'AI_NOT_CONFIGURED' ? 'AI 功能暂未启用，请联系站长' : msg;
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: friendly })}\n\n`));
           controller.close();
         }
       },

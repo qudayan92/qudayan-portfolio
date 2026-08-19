@@ -7,8 +7,8 @@
 - **Next.js 14** (App Router, RSC, SSG)
 - **TypeScript** - 全量类型化
 - **Tailwind CSS** - 原子化样式 + 设计系统
-- **Framer Motion** - 微交互动效
-- **MDX** - 可写代码块的博客（next-mdx-remote）
+- **DeepSeek** - AI Lab（简历润色 / 面试官 / 选题 / 破冰消息 / 博客摘要）
+- **Edge Runtime** - AI Route Handlers 流式响应 (SSE)
 - **Vercel** - 一键部署 + 全球边缘 CDN
 
 ## 🚀 一键部署到 Vercel
@@ -95,6 +95,20 @@ npm run dev
 # 生产构建
 npm run build
 npm start
+```
+
+## 🤖 AI Lab
+
+网站的 AI 功能（简历润色、面试官、选题、破冰消息）由 **DeepSeek** 驱动。详细配置见 [AI-LAB.md](./AI-LAB.md)。
+
+快速启用：
+
+```powershell
+# 1. 在 https://platform.deepseek.com 拿 API Key
+# 2. 配置到 Vercel
+vercel env add DEEPSEEK_API_KEY production
+# 3. 重新部署
+vercel deploy --prod --yes
 ```
 
 ## 🔧 后续可加的功能（按需）
