@@ -1,6 +1,7 @@
 import { ResumePolish } from '@/components/ai/ResumePolish';
 import { InterviewSimulator } from '@/components/ai/InterviewSimulator';
 import { BlogIdeas } from '@/components/ai/BlogIdeas';
+import { GrowthMetrics } from '@/components/ai/GrowthMetrics';
 
 export function AILab() {
   return (
@@ -20,6 +21,10 @@ export function AILab() {
           <p className="mt-4 max-w-2xl text-neutral-400">
             这一节由 DeepSeek 实时驱动。所有 API 调用走服务端（你的 Key 不暴露给前端），流式响应，逐字生成。失败有兜底，限频保护。
           </p>
+        </div>
+
+        <div className="mb-4">
+          <GrowthMetrics />
         </div>
 
         <div className="grid lg:grid-cols-2 gap-4">
