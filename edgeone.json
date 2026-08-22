@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "framework": "nextjs",
+  "build": {
+    "buildCommand": "npm run build",
+    "outputDirectory": ".next/standalone"
+  },
+  "runtime": {
+    "port": 3000,
+    "command": "node server.js"
+  }
+}
