@@ -45,6 +45,92 @@ html { font-feature-settings: "kern" 1, "liga" 1, "calt" 1; }
   border-color: rgba(167,139,250,0.25);
 }
 
+/* 浮动渐变光球（背景装饰） */
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.08); }
+  66% { transform: translate(-25px, 30px) scale(0.95); }
+}
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform;
+}
+.orb-a { animation: orb-float 18s ease-in-out infinite; }
+.orb-b { animation: orb-float 24s ease-in-out infinite reverse; }
+.orb-c { animation: orb-float 30s ease-in-out infinite; }
+
+/* ===== 背景场景转换动效元素 ===== */
+
+/* 极光流：几条斜向渐变光带缓慢扫过 */
+@keyframes aurora-drift {
+  0% { transform: translateX(-15%) translateY(0) rotate(0deg); opacity: 0.35; }
+  50% { transform: translateX(15%) translateY(-6%) rotate(3deg); opacity: 0.6; }
+  100% { transform: translateX(-15%) translateY(0) rotate(0deg); opacity: 0.35; }
+}
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.aurora-a {
+  top: -10%; left: -10%;
+  width: 70vw; height: 60vh;
+  background: conic-gradient(from 120deg at 50% 50%, transparent 0deg, rgba(34,211,238,0.25) 80deg, rgba(139,92,246,0.30) 160deg, transparent 260deg);
+  animation: aurora-drift 26s ease-in-out infinite;
+}
+.aurora-b {
+  bottom: -20%; right: -15%;
+  width: 80vw; height: 70vh;
+  background: conic-gradient(from 300deg at 50% 50%, transparent 0deg, rgba(240,171,252,0.22) 90deg, rgba(139,92,246,0.28) 180deg, transparent 280deg);
+  animation: aurora-drift 34s ease-in-out infinite reverse;
+}
+
+/* 缓慢旋转的虚线光环（gallery 氛围） */
+@keyframes ringspin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.bg-ring {
+  position: absolute;
+  border: 1px dashed rgba(167,139,250,0.25);
+  border-radius: 9999px;
+  pointer-events: none;
+  animation: ringspin 60s linear infinite;
+}
+
+/* 漂浮粒子：向上缓慢漂移、明暗呼吸 */
+@keyframes particle-rise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.8; }
+  50% { opacity: 0.5; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(-40vh) translateX(20px); opacity: 0; }
+}
+.bg-particle {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(165,243,252,0.5);
+  box-shadow: 0 0 8px 1px rgba(165,243,252,0.55);
+  pointer-events: none;
+  animation: particle-rise linear infinite;
+}
+.bg-particle.violet { background: rgba(196,181,253,0.5); box-shadow: 0 0 8px 1px rgba(196,181,253,0.55); }
+
+/* 场景转场：背景图片层缓慢缩放 (Ken Burns) */
+@keyframes kenburns {
+  0% { transform: scale(1.02) translateY(0); }
+  100% { transform: scale(1.12) translateY(-2%); }
+}
+.bg-kenburns {
+  animation: kenburns 32s ease-in-out infinite alternate;
+}
+
 /* hero 背景网格 */
 .grid-bg {
   background-image:

@@ -41,7 +41,20 @@ resume.md
 
 # 腾讯云 CloudBase 部署配置（含 API 密钥，不进 git）
 cloudbaserc.json
+cloudbaserc.json.bak
 scf-functions/
+
+# 部署调试残留脚本（TCB / EdgeOne 探索产物，无保留价值）
+_*.mjs
+_tcb-*.mjs
+_fetch-*.mjs
+_test-*.mjs
+_fix-routes.mjs
+_edit-routes.mjs
+_make-eo-bundle.mjs
+scf_bootstrap
+scripts/scf-prepare.js
+scripts/deploy-*.ps1
 
 # Tencent Cloud EdgeOne
 .env

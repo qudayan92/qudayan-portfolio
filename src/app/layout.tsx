@@ -3,6 +3,8 @@ import './globals.css';
 import { Nav } from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { Background } from '@/components/Background';
+import { IPAIChat } from '@/components/ai/IPAIChat';
+import { VoiceGreeting } from '@/components/ai/VoiceGreeting';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://qudayan.com'),
@@ -61,6 +63,8 @@ export default function RootLayout({
         <Nav />
         <main className="relative z-10">{children}</main>
         <Footer />
+        <IPAIChat />
+        <VoiceGreeting />
       </body>
     </html>
   );

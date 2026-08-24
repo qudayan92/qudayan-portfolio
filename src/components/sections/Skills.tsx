@@ -1,3 +1,6 @@
+'use client';
+
+import { motion, useReducedMotion } from 'framer-motion';
 import { skills } from '@/lib/profile';
 
 const groupLabel: Record<string, string> = {
@@ -10,6 +13,7 @@ const groupLabel: Record<string, string> = {
 const groupOrder: Array<keyof typeof groupLabel> = ['产品', '设计', '数据', '技术'];
 
 export function Skills() {
+  const reduce = useReducedMotion();
   return (
     <section id="skills" className="py-20">
       <div className="mx-auto max-w-6xl px-6">
@@ -26,9 +30,9 @@ export function Skills() {
                 <h3 className="text-sm uppercase tracking-widest text-neutral-400">
                   {groupLabel[g]}
                 </h3>
-                <ul className="mt-5 space-y-3.5">
+                <div className="mt-5 space-y-3.5">
                   {items.map((s) => (
-                    <li key={s.name} className="">
+                    <div key={s.name}>
                       <div className="flex items-baseline justify-between text-sm">
                         <span className="text-neutral-200">{s.name}</span>
                         <span className="font-mono text-[10px] text-neutral-600">
@@ -36,14 +40,17 @@ export function Skills() {
                         </span>
                       </div>
                       <div className="mt-1.5 h-1 w-full rounded-full bg-white/[0.04]">
-                        <div
-                          className="h-1 rounded-full bg-gradient-to-r from-accent-400 to-violet-500 transition-all"
-                          style={{ width: `${(s.level / 5) * 100}%` }}
+                        <motion.div
+                          className="h-1 rounded-full bg-gradient-to-r from-accent-400 to-violet-500"
+                          initial={reduce ? { width: `${(s.level / 5) * 100}%` } : { width: 0 }}
+                          whileInView={{ width: `${(s.level / 5) * 100}%` }}
+                          viewport={{ once: true, amount: 0.6 }}
+                          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
                         />
                       </div>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             );
           })}
