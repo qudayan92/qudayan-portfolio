@@ -12,7 +12,7 @@ export function Contact() {
             <div
               aria-hidden
               className="absolute inset-0"
-              style={{ backgroundImage: 'url(/bg-ambient.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+              style={{ backgroundImage: 'url(/bg-ambient.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}
             />
             <div aria-hidden className="absolute inset-0 bg-ink-950/70" />
             {/* 装饰光 */}

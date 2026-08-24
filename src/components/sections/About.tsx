@@ -45,7 +45,7 @@ export function About() {
                 <div className="relative">
                   <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-accent-400 to-violet-500 opacity-40 blur-md" />
                   <img
-                    src="/avatar.png"
+                    src="/avatar.webp"
                     alt="瞿达炎"
                     className="relative h-20 w-20 rounded-2xl ring-1 ring-white/10"
                   />
@@ -94,7 +94,7 @@ export function About() {
         {/* IP 形象情绪横幅 */}
         <Reveal delay={0.15}>
           <div className="relative mt-10 overflow-hidden rounded-3xl border border-white/10">
-            <div className="absolute inset-0" style={{ backgroundImage: 'url(/bg-ambient.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="absolute inset-0" style={{ backgroundImage: 'url(/bg-ambient.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
             <div className="absolute inset-0 bg-ink-950/60" />
             <div className="relative grid md:grid-cols-[1.2fr_1fr] gap-6 p-8 md:p-12 items-center">
               <div>
@@ -121,7 +121,7 @@ export function About() {
                 <div className="relative">
                   <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-accent-400/30 to-violet-500/30 blur-xl" />
                   <img
-                    src="/ip-pm.png"
+                    src="/ip-pm.webp"
                     alt="瞿达炎 3D IP 形象"
                     className="relative h-56 w-56 md:h-64 md:w-64 object-cover rounded-2xl ring-1 ring-white/15"
                     width={512}

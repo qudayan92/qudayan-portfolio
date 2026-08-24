@@ -37,7 +37,7 @@ export function HeroVisual() {
         >
           <div className="relative h-[21rem] w-[21rem] overflow-hidden rounded-[2rem] ring-1 ring-white/15 shadow-2xl shadow-violet-500/20">
             <img
-              src="/ip-pm.png"
+              src="/ip-pm.webp"
               alt="瞿达炎 IP 形象"
               className="h-full w-full object-cover"
               width={420}

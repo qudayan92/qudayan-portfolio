@@ -88,7 +88,7 @@ export function VoiceGreeting() {
       {open && (
         <div className="fixed bottom-28 right-5 z-50 max-w-[15rem] rounded-2xl border border-white/10 bg-ink-900/90 p-3 shadow-xl backdrop-blur-md">
           <div className="flex items-start gap-2">
-            <img src="/ip-pm.png" alt="" className="h-8 w-8 flex-none rounded-full object-cover ring-1 ring-white/20" />
+            <img src="/ip-pm.webp" alt="" className="h-8 w-8 flex-none rounded-full object-cover ring-1 ring-white/20" />
             <p className="text-xs leading-relaxed text-neutral-200">
               你好，我是瞿达炎的 AI 分身 👋 欢迎随时来聊！
             </p>

@@ -9,7 +9,7 @@ export function Background() {
         <div
           className="bg-kenburns absolute inset-0"
           style={{
-            backgroundImage: 'url(/bg-ambient.png)',
+            backgroundImage: 'url(/bg-ambient.webp)',
             backgroundSize: 'cover',
             backgroundPosition: 'center top',
             opacity: 0.55,

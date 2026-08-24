@@ -168,7 +168,7 @@ export function IPAIChat() {
           <X className="h-6 w-6" />
         ) : (
           <div className="relative flex items-center justify-center">
-            <img src="/ip-pm.png" alt="" className="h-14 w-14 rounded-full object-cover ring-2 ring-white/40" />
+            <img src="/ip-pm.webp" alt="" className="h-14 w-14 rounded-full object-cover ring-2 ring-white/40" />
             {unread && (
               <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center">
                 <span className="absolute h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
@@ -202,7 +202,7 @@ export function IPAIChat() {
               style={{ touchAction: reduce ? 'auto' : 'none', cursor: reduce ? 'default' : 'grab' }}
             >
               <div className="relative">
-                <img src="/ip-pm.png" alt="IP 分身" className="h-10 w-10 rounded-full object-cover ring-2 ring-accent-400/60" />
+                <img src="/ip-pm.webp" alt="IP 分身" className="h-10 w-10 rounded-full object-cover ring-2 ring-accent-400/60" />
                 <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-ink-900" />
               </div>
               <div className="flex-1">
