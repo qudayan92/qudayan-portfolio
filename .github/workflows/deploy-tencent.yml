@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -20,22 +20,32 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies (with offline cache)
+      - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --no-fund
 
       - name: Build Next.js (standalone)
         run: npm run build
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_API_BASE_URL: https://apihub.agnes-ai.com/v1
+          LLM_MODEL: agnes-2.5-flash
 
+      # 组装 Cloud Run 可直接运行的 standalone 目录
+      # 关键：把 .next/static 与 public 复制进 standalone，否则页面 CSS/图片 404
       - name: Prepare deploy artifacts
         run: |
           mkdir -p deploy
           cp -r .next/standalone/* deploy/
           cp -r .next/static deploy/.next/static
           cp -r public deploy/public 2>/dev/null || true
-          # 把 ai-summaries.json 放到运行时可访问的位置
+          # AI 摘要 JSON（构建时已嵌入 frontmatter，保留运行时访问）
           cp src/lib/ai-summaries.json deploy/src/lib/ai-summaries.json 2>/dev/null || true
+          # 运行时环境变量
+          cat > deploy/.env << EOF
+          LLM_API_KEY=${{ secrets.LLM_API_KEY }}
+          LLM_API_BASE_URL=https://apihub.agnes-ai.com/v1
+          LLM_MODEL=agnes-2.5-flash
+          EOF
           echo "Deploy artifacts size:"
           du -sh deploy/
 
@@ -46,14 +56,14 @@ jobs:
         run: |
           tcb login --apiKeyId "$TCB_SECRET_ID" --apiKey "$TCB_SECRET_KEY"
 
-      - name: Deploy to Cloud Run (with retries for upload timeout)
+      # 源码部署到 Cloud Run（云端构建），带重试
+      - name: Deploy to Cloud Run
         run: |
           cd deploy
-          # 重试机制：上传大文件时偶发 socket hang up
           for i in 1 2 3; do
             echo "Attempt $i/3..."
             if tcb cloudrun deploy -s qudayan-portfolio \
-              --port 3000 --force \
+              --port 3000 --force --installDependency=false \
               -e "$TCB_ENV_ID"; then
               echo "✓ Deploy succeeded"
               break
@@ -66,11 +76,13 @@ jobs:
       - name: Verify deployment
         if: success()
         run: |
-          sleep 15
-          SERVICE_URL=$(tcb cloudrun list -e "$TCB_ENV_ID" --json 2>/dev/null | grep -oP 'https://[^"]+' | head -1)
-          if [ -n "$SERVICE_URL" ]; then
-            echo "✓ Service URL: $SERVICE_URL"
-            curl -s -o /dev/null -w "HTTP %{http_code}\n" "$SERVICE_URL" || echo "Service not yet ready"
+          sleep 20
+          URL=$(tcb cloudrun list -e "$TCB_ENV_ID" --json 2>/dev/null | grep -oP 'https://[^"]+' | head -1)
+          if [ -n "$URL" ]; then
+            echo "✓ Service URL: $URL"
+            curl -s -o /dev/null -w "HTTP %{http_code}\n" --max-time 30 "$URL" || echo "Service not yet ready"
+          else
+            echo "未获取到服务 URL，稍后可手动确认"
           fi
 
     env:
