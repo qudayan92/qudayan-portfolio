@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
@@ -23,31 +23,21 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --no-fund
 
-      - name: Build Next.js (standalone)
-        run: npm run build
-        env:
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-          LLM_API_BASE_URL: https://apihub.agnes-ai.com/v1
-          LLM_MODEL: agnes-2.5-flash
-
-      # 组装 Cloud Run 可直接运行的 standalone 目录
-      # 关键：把 .next/static 与 public 复制进 standalone，否则页面 CSS/图片 404
+      # 组装 CloudBase Cloud Run 可构建目录：含 Dockerfile + 完整构建源码，
+      # 排除 node_modules/.next/.git/机密文件。CloudBase 检测到 Dockerfile 会走容器模式。
       - name: Prepare deploy artifacts
         run: |
+          node scripts/prepare-cloudrun.mjs
+
+      # 写入运行时环境变量（Docker 构建时注入，AI 功能需要）
+      - name: Write runtime env
+        run: |
           mkdir -p deploy
-          cp -r .next/standalone/* deploy/
-          cp -r .next/static deploy/.next/static
-          cp -r public deploy/public 2>/dev/null || true
-          # AI 摘要 JSON（构建时已嵌入 frontmatter，保留运行时访问）
-          cp src/lib/ai-summaries.json deploy/src/lib/ai-summaries.json 2>/dev/null || true
-          # 运行时环境变量
-          cat > deploy/.env << EOF
+          cat >> deploy/.env << EOF
           LLM_API_KEY=${{ secrets.LLM_API_KEY }}
           LLM_API_BASE_URL=https://apihub.agnes-ai.com/v1
           LLM_MODEL=agnes-2.5-flash
           EOF
-          echo "Deploy artifacts size:"
-          du -sh deploy/
 
       - name: Install CloudBase CLI
         run: npm install -g @cloudbase/cli
@@ -56,14 +46,13 @@ jobs:
         run: |
           tcb login --apiKeyId "$TCB_SECRET_ID" --apiKey "$TCB_SECRET_KEY"
 
-      # 源码部署到 Cloud Run（云端构建），带重试
+      # 源码部署到 Cloud Run（云端用 deploy/Dockerfile 构建），带重试
       - name: Deploy to Cloud Run
         run: |
-          cd deploy
           for i in 1 2 3; do
             echo "Attempt $i/3..."
             if tcb cloudrun deploy -s qudayan-portfolio \
-              --port 3000 --force --installDependency=false \
+              --port 3000 --force --source deploy \
               -e "$TCB_ENV_ID"; then
               echo "✓ Deploy succeeded"
               break
@@ -76,7 +65,7 @@ jobs:
       - name: Verify deployment
         if: success()
         run: |
-          sleep 20
+          sleep 25
           URL=$(tcb cloudrun list -e "$TCB_ENV_ID" --json 2>/dev/null | grep -oP 'https://[^"]+' | head -1)
           if [ -n "$URL" ]; then
             echo "✓ Service URL: $URL"

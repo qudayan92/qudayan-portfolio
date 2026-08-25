@@ -63,4 +63,7 @@ scripts/deploy-*.ps1
 
 # EdgeOne Pages 部署中间产物
 _eop-deploy/
+
+# CloudBase Cloud Run 部署中间产物（prepare-cloudrun 生成）
+deploy/
   

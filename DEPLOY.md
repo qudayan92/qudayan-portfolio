@@ -190,12 +190,25 @@ Vercel 推荐用 [Resend](https://resend.com)，每月 3000 封免费，配合 N
 
 部署成功后，工作流末尾会打印服务的访问 URL（如 `https://xxx.tcloudbaseapp.com`）。
 
-### 部署原理（Cloud Run）
+### 第 5 步：配置服务环境变量（让 AI 功能可用）
 
-- `.github/workflows/deploy-tencent.yml` 会在 GitHub 云端构建 Next.js **standalone** 产物
-- 把 `.next/static` 与 `public` 复制进 standalone 目录，保证页面 CSS/图片可用
-- 生成运行时 `.env`（写入 `LLM_API_KEY` 等环境变量）
-- 用 `tcb cloudrun deploy` 源码部署到 Cloud Run
+因为 Next.js 运行时读取的是 `process.env`，`tcb cloudrun deploy` 不会自动注入环境变量。**首次部署后**，需到 CloudRun 服务配置里设置环境变量：
+
+1. 进入 [CloudBase 控制台](https://console.cloud.tencent.com/tcb) → 你的环境 → **云托管（Cloud Run）**
+2. 找到 `qudayan-portfolio` 服务 → **服务配置**
+3. 在环境变量里添加：
+   - `LLM_API_KEY` = 你的 Agnes AI Key（`sk-...`）
+   - `LLM_API_BASE_URL` = `https://apihub.agnes-ai.com/v1`
+   - `LLM_MODEL` = `agnes-2.5-flash`
+4. 保存并重新部署
+
+> 如果不配置，页面正常，但 AI 功能（润色/聊天分身等）会显示「AI 未启用」。
+
+### 部署原理（Cloud Run · Docker 模式）
+
+- `.github/workflows/deploy-tencent.yml` 用 `scripts/prepare-cloudrun.mjs` 组装一个**干净的 `deploy/` 目录**（含 `Dockerfile` + 构建源码，排除 node_modules/.next/机密）
+- `tcb cloudrun deploy --source deploy` 检测到 `deploy/` 里有 `Dockerfile`，自动走 **容器（container）模式**，用 Dockerfile 在云端构建 standalone 镜像
+- Dockerfile 三段式构建：`npm ci` → `npm run build` → `node server.js`（已本地验证可跑）
 
 > 注意：`next.config.mjs` 已开启 `output: 'standalone'`（Cloud Run 需要）。若同时使用 EdgeOne Pages（走标准构建），两者互不影响。
 
@@ -204,5 +217,5 @@ Vercel 推荐用 [Resend](https://resend.com)，每月 3000 封免费，配合 N
 | 症状 | 原因 | 解决 |
 |---|---|---|
 | 部署失败，提示 `Cannot read properties of null (reading 'secretId')` | GitHub Secrets 没填或填错 | 补齐 `TCB_SECRET_ID`/`TCB_SECRET_KEY` 再手动重跑 |
-| 部署后 AI 报「未启用」 | 云端没配置 `LLM_API_KEY` | 确保 Secrets 里有 `LLM_API_KEY`，重新触发 |
-| 部署后页面样式丢失 | `.next/static` 没进产物 | 确认 workflow 的 `Prepare deploy artifacts` 步骤执行成功 |
+| 部署后 AI 报「未启用」 | 服务环境变量没配 `LLM_API_KEY` | 按「第 5 步」在控制台配环境变量后重新部署 |
+| 部署后页面样式丢失 | `.next/static` 没进产物 | 确认 Dockerfile 正确复制 `.next/static`（已内置） |
