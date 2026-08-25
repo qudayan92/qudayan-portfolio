@@ -149,3 +149,60 @@ Vercel 默认走 AWS 全球边缘，国内访问偶尔慢。可以同时绑一�
 ### Q：怎么加自定义域名邮箱（比如 hello@qudayan.com）？
 
 Vercel 推荐用 [Resend](https://resend.com)，每月 3000 封免费，配合 Next.js 的 `route.ts` 写一个表单端点就行。需要的话告诉我，我帮你加。
+
+---
+
+## ☁️ 部署到腾讯云 CloudBase（Cloud Run）
+
+整站（页面 + AI 功能）部署到腾讯云 CloudBase Cloud Run，国内访问更快，不依赖 Vercel。
+
+### 第 1 步：准备腾讯云 API 密钥
+
+1. 登录 [腾讯云控制台](https://console.cloud.tencent.com/)
+2. 进入 **访问管理（CAM）→ API 密钥管理**：https://console.cloud.tencent.com/cam/capi
+3. 点 **新建密钥**，生成 `SecretId` 和 `SecretKey`（**只显示一次，请保存**）
+4. 确保该密钥所在的账号/子账号有 CloudBase 相关权限（可先在控制台给子账号授权 `QcloudCloudBaseFullAccess`）
+
+### 第 2 步：创建 CloudBase 环境
+
+1. 进入 [CloudBase 控制台](https://console.cloud.tencent.com/tcb)
+2. 如果还没有环境，点 **新建环境**
+3. 记下 **环境 ID**（形如 `cloudbase-xxxxxxxxxxxx`），部署时要用
+
+### 第 3 步：把密钥填到 GitHub Secrets
+
+在 GitHub 仓库 `qudayan-portfolio` → **Settings → Secrets and variables → Actions → New repository secret**，依次添加：
+
+| Secret 名 | 值 |
+|---|---|
+| `TCB_SECRET_ID` | 你的腾讯云 SecretId |
+| `TCB_SECRET_KEY` | 你的腾讯云 SecretKey |
+| `TCB_ENV_ID` | 你的 CloudBase 环境 ID |
+| `LLM_API_KEY` | Agnes AI 的 Key（`sk-...`）|
+
+> ⚠️ 这些密钥只存在 GitHub Secrets，**不会进入代码仓库**。本仓库的 `.gitignore` 已排除 `cloudbaserc.json` 和 `.env`。
+
+### 第 4 步：触发部署
+
+两个方式任选：
+- **自动**：推送 `main` 分支会自动触发 `.github/workflows/deploy-tencent.yml`
+- **手动**：GitHub 仓库 → **Actions** → 选 `Deploy to Tencent CloudBase (Cloud Run)` → **Run workflow**
+
+部署成功后，工作流末尾会打印服务的访问 URL（如 `https://xxx.tcloudbaseapp.com`）。
+
+### 部署原理（Cloud Run）
+
+- `.github/workflows/deploy-tencent.yml` 会在 GitHub 云端构建 Next.js **standalone** 产物
+- 把 `.next/static` 与 `public` 复制进 standalone 目录，保证页面 CSS/图片可用
+- 生成运行时 `.env`（写入 `LLM_API_KEY` 等环境变量）
+- 用 `tcb cloudrun deploy` 源码部署到 Cloud Run
+
+> 注意：`next.config.mjs` 已开启 `output: 'standalone'`（Cloud Run 需要）。若同时使用 EdgeOne Pages（走标准构建），两者互不影响。
+
+### 常见问题
+
+| 症状 | 原因 | 解决 |
+|---|---|---|
+| 部署失败，提示 `Cannot read properties of null (reading 'secretId')` | GitHub Secrets 没填或填错 | 补齐 `TCB_SECRET_ID`/`TCB_SECRET_KEY` 再手动重跑 |
+| 部署后 AI 报「未启用」 | 云端没配置 `LLM_API_KEY` | 确保 Secrets 里有 `LLM_API_KEY`，重新触发 |
+| 部署后页面样式丢失 | `.next/static` 没进产物 | 确认 workflow 的 `Prepare deploy artifacts` 步骤执行成功 |
