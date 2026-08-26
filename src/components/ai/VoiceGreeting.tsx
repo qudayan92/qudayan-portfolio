@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
-import { useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 const STORAGE_KEY = 'qudayan_voice_on';
+// 简历式个人介绍（第一人称，服务端男声播报）
 const GREETING =
-  '你好呀，我是瞿达炎，一名来自深圳的产品经理。过去八年，我从设计师一路做到产品，主导过智能家居、移动应用、快应用，还有企业的 ERP 系统。我习惯用设计师的眼睛看用户，用工程师的脑子做决策。如果你也对好产品感兴趣，或者想跟我聊聊合作，欢迎随时点右下角找我。';
+  '你好，我是瞿达炎，深圳的产品经理。过去八年，我在智能家居、移动应用、快应用和 ERP 领域，主导过多个从零到一的产品。我做过设计师，也懂工程师，最擅长把复杂的想法变成好用、能落地的产品。如果你正在招人，或者想聊聊产品合作，欢迎随时找我。';
 
 const synthAvailable = () => typeof window !== 'undefined' && 'speechSynthesis' in window;
 
@@ -40,7 +41,7 @@ export function VoiceGreeting() {
     }
   }, []);
 
-  // Chrome/Edge 的 getVoices() 首帧可能为空，等 voiceschanged 后再取；这里只标记"语音已就绪"。
+  // Chrome/Edge 的 getVoices() 首帧可能为空，等 voiceschanged 后再取
   useEffect(() => {
     const synth = typeof window !== 'undefined' ? window.speechSynthesis : undefined;
     if (!synth) return;
@@ -82,7 +83,6 @@ export function VoiceGreeting() {
       u.onerror = () => setSpeaking(false);
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(u);
-      // Chrome 偶发需要 resume() 兜底，否则"排上号却不响"。
       window.setTimeout(() => {
         try {
           window.speechSynthesis.resume();
@@ -95,7 +95,7 @@ export function VoiceGreeting() {
     }
   }, []);
 
-  /** 主路径：优先服务端神经语音合成（真人音色），失败回退内置语音。 */
+  /** 主路径：优先服务端神经语音合成（男声／真人音色），失败回退内置语音。 */
   const speak = useCallback(
     async (text: string) => {
       stopAudio();
@@ -117,14 +117,13 @@ export function VoiceGreeting() {
         audio.onerror = () => stopAudio();
         await audio.play();
       } catch {
-        // 服务端出不来就回退内置语音
         playNative(text);
       }
     },
     [playNative, stopAudio],
   );
 
-  // 首次进入的欢迎播报：自动尝试 + 用户手势兜底（满足自动播放策略）。用 ref 保证只播一次。
+  // 进入页面自动播报（每次刷新/重新加载都会重新触发），并保留用户手势兜底以满足自动播放策略
   const spokenRef = useRef(false);
   useEffect(() => {
     if (muted || reduce) return;
@@ -134,7 +133,7 @@ export function VoiceGreeting() {
       speak(GREETING);
     };
 
-    const auto = window.setTimeout(fire, 1200);
+    const auto = window.setTimeout(fire, 700);
     const onFirst = () => fire();
     window.addEventListener('pointerdown', onFirst, { once: true });
     window.addEventListener('keydown', onFirst, { once: true });
@@ -167,27 +166,55 @@ export function VoiceGreeting() {
     }
   };
 
+  // 独立站立的 IP 形象：活泼睿智，漂浮发光，并随播报展示介绍文本
+  const showPanel = open || speaking;
+
   return (
     <>
-      {/* 语音问候提示气泡 */}
-      {open && (
-        <div className="fixed bottom-28 right-5 z-50 max-w-[15rem] rounded-2xl border border-white/10 bg-ink-900/90 p-3 shadow-xl backdrop-blur-md">
-          <div className="flex items-start gap-2">
-            <img
-              src="/ip-pm.webp"
-              alt=""
-              className="h-8 w-8 flex-none rounded-full object-cover ring-1 ring-white/20"
-            />
-            <p className="text-xs leading-relaxed text-neutral-200">
-              {speaking ? '正在播报…' : '你好，我是瞿达炎的 AI 分身 👋 欢迎随时来聊！'}
-            </p>
+      {showPanel && (
+        <div className="fixed bottom-24 right-5 z-50 w-72 overflow-hidden rounded-2xl border border-white/10 bg-ink-900/85 p-4 shadow-2xl backdrop-blur-md">
+          <div className="flex items-center gap-3.5">
+            {/* 活泼漂浮的 IP 头像 */}
+            <motion.div
+              className="relative h-20 w-20 flex-none"
+              animate={reduce ? undefined : { y: [0, -7, 0] }}
+              transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <div
+                aria-hidden
+                className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-accent-400/40 via-violet-500/40 to-fuchsia-500/30 blur-md animate-pulse"
+              />
+              <img
+                src="/ip-pm.webp"
+                alt="瞿达炎 IP 形象"
+                className="relative h-20 w-20 rounded-full object-cover ring-1 ring-white/20"
+              />
+              {speaking && (
+                <span className="absolute bottom-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-400 text-[9px] font-bold text-ink-950">
+                  <span className="h-1.5 w-1.5 rounded-full bg-ink-950 animate-pulse-dot" />
+                </span>
+              )}
+            </motion.div>
+
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-medium text-white">瞿达炎</span>
+                <span className="rounded-full border border-accent-400/30 bg-accent-400/10 px-1.5 py-0.5 text-[10px] text-accent-200">
+                  产品经理
+                </span>
+              </div>
+              <p className="mt-1.5 line-clamp-3 text-[11px] leading-relaxed text-neutral-300">
+                {speaking ? GREETING : '你好，我是瞿达炎的 AI 分身 👋 由真人男声为你介绍简历。'}
+              </p>
+            </div>
           </div>
         </div>
       )}
+
       <button
         onClick={toggle}
-        aria-label={muted ? '开启语音问候' : '关闭语音问候'}
-        title={muted ? '开启语音问候' : '关闭语音问候'}
+        aria-label={muted ? '开启语音介绍' : '关闭语音介绍'}
+        title={muted ? '开启语音介绍' : '关闭语音介绍'}
         className="fixed bottom-5 right-[5.5rem] z-50 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-ink-800/80 text-neutral-300 backdrop-blur-md transition hover:text-white"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
