@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'framer-motion';
+import { IPPersona } from '@/components/ai/IPPersona';
 
 const STORAGE_KEY = 'qudayan_voice_on';
 // 简历式个人介绍（第一人称，服务端男声播报）
@@ -171,45 +172,7 @@ export function VoiceGreeting() {
 
   return (
     <>
-      {showPanel && (
-        <div className="fixed bottom-24 right-5 z-50 w-72 overflow-hidden rounded-2xl border border-white/10 bg-ink-900/85 p-4 shadow-2xl backdrop-blur-md">
-          <div className="flex items-center gap-3.5">
-            {/* 活泼漂浮的 IP 头像 */}
-            <motion.div
-              className="relative h-20 w-20 flex-none"
-              animate={reduce ? undefined : { y: [0, -7, 0] }}
-              transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <div
-                aria-hidden
-                className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-accent-400/40 via-violet-500/40 to-fuchsia-500/30 blur-md animate-pulse"
-              />
-              <img
-                src="/ip-pm.webp"
-                alt="瞿达炎 IP 形象"
-                className="relative h-20 w-20 rounded-full object-cover ring-1 ring-white/20"
-              />
-              {speaking && (
-                <span className="absolute bottom-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-400 text-[9px] font-bold text-ink-950">
-                  <span className="h-1.5 w-1.5 rounded-full bg-ink-950 animate-pulse-dot" />
-                </span>
-              )}
-            </motion.div>
-
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-medium text-white">瞿达炎</span>
-                <span className="rounded-full border border-accent-400/30 bg-accent-400/10 px-1.5 py-0.5 text-[10px] text-accent-200">
-                  产品经理
-                </span>
-              </div>
-              <p className="mt-1.5 line-clamp-3 text-[11px] leading-relaxed text-neutral-300">
-                {speaking ? GREETING : '你好，我是瞿达炎的 AI 分身 👋 由真人男声为你介绍简历。'}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      <IPPersona visible={showPanel} speaking={speaking} text={GREETING} />
 
       <button
         onClick={toggle}
