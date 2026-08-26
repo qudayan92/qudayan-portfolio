@@ -10,6 +10,7 @@
     "deploy": "vercel --prod"
   },
   "dependencies": {
+    "edge-tts-universal": "^1.4.0",
     "framer-motion": "11.11.9",
     "gray-matter": "4.0.3",
     "lucide-react": "0.453.0",

@@ -8,7 +8,9 @@ const STORAGE_KEY = 'qudayan_voice_on';
 const GREETING =
   '你好呀，欢迎来到瞿达炎的个人网站。他是深圳的产品经理，会做产品、也懂设计。想聊聊他的项目，或者你的产品点子，随时点右下角找我聊哦。';
 
-/** 在已加载的语音里挑一个中文(优先 zh-CN)的;没有就返回 undefined 交给浏览器默认。 */
+const synthAvailable = () => typeof window !== 'undefined' && 'speechSynthesis' in window;
+
+/** 在已加载的语音里挑一个中文(优先 zh-CN)的；没有就交给浏览器默认。 */
 function pickChineseVoice(): SpeechSynthesisVoice | undefined {
   const voices = window.speechSynthesis?.getVoices?.() ?? [];
   return (
@@ -25,6 +27,9 @@ export function VoiceGreeting() {
   const [speaking, setSpeaking] = useState(false);
   const reduce = useReducedMotion();
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const objectUrlRef = useRef<string | null>(null);
+
   // 读取持久化的静音偏好
   useEffect(() => {
     try {
@@ -35,65 +40,101 @@ export function VoiceGreeting() {
     }
   }, []);
 
-  // Chrome/Edge 的 getVoices() 首帧可能为空,等 voiceschanged 后再取;这里只标记"语音已就绪"。
+  // Chrome/Edge 的 getVoices() 首帧可能为空，等 voiceschanged 后再取；这里只标记"语音已就绪"。
   useEffect(() => {
     const synth = typeof window !== 'undefined' ? window.speechSynthesis : undefined;
     if (!synth) return;
-    const onVoicesChanged = () => {
-      // 触发一次缓存更新,后续 pickChineseVoice 就能拿到实际语音
-      synth.getVoices();
-    };
+    const onVoicesChanged = () => synth.getVoices();
     synth.addEventListener('voiceschanged', onVoicesChanged);
     return () => synth.removeEventListener('voiceschanged', onVoicesChanged);
   }, []);
 
-  const speak = useCallback((text: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    const synth = window.speechSynthesis;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'zh-CN';
-    u.rate = 1.0;
-    u.pitch = 1.0;
-    u.volume = 1;
-    const zh = pickChineseVoice();
-    if (zh) u.voice = zh;
-    u.onstart = () => setSpeaking(true);
-    u.onend = () => setSpeaking(false);
-    u.onerror = () => setSpeaking(false);
+  const stopAudio = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.src = '';
+      audio.onended = null;
+      audio.onerror = null;
+      audio.onplay = null;
+    }
+    audioRef.current = null;
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current);
+      objectUrlRef.current = null;
+    }
+    setSpeaking(false);
+  }, []);
 
-    // 先清掉可能卡住的旧队列,再 speak;部分浏览器 speak 之前需 cancel 才放得出来。
+  /** 回退方案：浏览器内置 Web Speech 合成（音色一般，但零依赖、离线可用）。 */
+  const playNative = useCallback((text: string) => {
+    if (!synthAvailable()) return;
     try {
-      synth.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'zh-CN';
+      u.rate = 1.0;
+      u.pitch = 1.0;
+      u.volume = 1;
+      const zh = pickChineseVoice();
+      if (zh) u.voice = zh;
+      u.onstart = () => setSpeaking(true);
+      u.onend = () => setSpeaking(false);
+      u.onerror = () => setSpeaking(false);
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+      // Chrome 偶发需要 resume() 兜底，否则"排上号却不响"。
+      window.setTimeout(() => {
+        try {
+          window.speechSynthesis.resume();
+        } catch {
+          // ignore
+        }
+      }, 50);
     } catch {
       // ignore
     }
-    synth.speak(u);
-    // Chrome 偶发需要 resume() 兜底一次,否则语音"排上了却不响"。
-    window.setTimeout(() => {
-      try {
-        synth.resume();
-      } catch {
-        // ignore
-      }
-    }, 50);
   }, []);
 
-  // 首次进入的欢迎播报:自动尝试 + 用户手势兜底(满足自动播放策略)。用 ref 保证只播一次。
+  /** 主路径：优先服务端神经语音合成（真人音色），失败回退内置语音。 */
+  const speak = useCallback(
+    async (text: string) => {
+      stopAudio();
+      try {
+        const rsp = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+        });
+        if (!rsp.ok) throw new Error(`tts_http_${rsp.status}`);
+        const blob = await rsp.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        objectUrlRef.current = url;
+        audio.volume = 1;
+        audio.onplay = () => setSpeaking(true);
+        audio.onended = () => stopAudio();
+        audio.onerror = () => stopAudio();
+        await audio.play();
+      } catch {
+        // 服务端出不来就回退内置语音
+        playNative(text);
+      }
+    },
+    [playNative, stopAudio],
+  );
+
+  // 首次进入的欢迎播报：自动尝试 + 用户手势兜底（满足自动播放策略）。用 ref 保证只播一次。
   const spokenRef = useRef(false);
   useEffect(() => {
     if (muted || reduce) return;
-    const synth = typeof window !== 'undefined' ? window.speechSynthesis : undefined;
-    if (!synth) return;
-
     const fire = () => {
       if (spokenRef.current) return;
       spokenRef.current = true;
       speak(GREETING);
     };
 
-    // 1) 自动尝试(约 1.2s)
     const auto = window.setTimeout(fire, 1200);
-    // 2) 首个用户手势兜底(pointerdown/keydown/touchstart)
     const onFirst = () => fire();
     window.addEventListener('pointerdown', onFirst, { once: true });
     window.addEventListener('keydown', onFirst, { once: true });
@@ -107,6 +148,9 @@ export function VoiceGreeting() {
     };
   }, [muted, reduce, speak]);
 
+  // 卸载时停止播放
+  useEffect(() => () => stopAudio(), [stopAudio]);
+
   const toggle = () => {
     const next = !muted;
     setMuted(next);
@@ -117,9 +161,9 @@ export function VoiceGreeting() {
     }
     if (!next) {
       speak(GREETING);
-    } else if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      setSpeaking(false);
+    } else {
+      if (synthAvailable()) window.speechSynthesis.cancel();
+      stopAudio();
     }
   };
 
