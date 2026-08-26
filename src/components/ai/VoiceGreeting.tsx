@@ -6,7 +6,7 @@ import { useReducedMotion } from 'framer-motion';
 
 const STORAGE_KEY = 'qudayan_voice_on';
 const GREETING =
-  '你好呀，欢迎来到瞿达炎的个人网站。他是深圳的产品经理，会做产品、也懂设计。想聊聊他的项目，或者你的产品点子，随时点右下角找我聊哦。';
+  '你好呀，我是瞿达炎，一名来自深圳的产品经理。过去八年，我从设计师一路做到产品，主导过智能家居、移动应用、快应用，还有企业的 ERP 系统。我习惯用设计师的眼睛看用户，用工程师的脑子做决策。如果你也对好产品感兴趣，或者想跟我聊聊合作，欢迎随时点右下角找我。';
 
 const synthAvailable = () => typeof window !== 'undefined' && 'speechSynthesis' in window;
 
