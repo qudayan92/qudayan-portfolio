@@ -1,4 +1,4 @@
-import { me, education } from '@/lib/profile';
+import { me, education, ip } from '@/lib/profile';
 import { Reveal } from '@/components/motion/Reveal';
 import { ShinyText } from '@/components/motion/ShinyText';
 import { Sparkles } from 'lucide-react';
@@ -123,7 +123,7 @@ export function About() {
                 <div className="relative">
                   <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-accent-400/30 to-violet-500/30 blur-xl" />
                   <img
-                    src="/ip-pm.webp"
+                    src={ip.portrait}
                     alt="瞿达炎 3D IP 形象"
                     className="relative h-56 w-56 md:h-64 md:w-64 object-cover rounded-2xl ring-1 ring-white/15"
                     width={512}

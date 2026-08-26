@@ -211,3 +211,15 @@ export const now = {
     { label: 'Stable Diffusion 出 UI 概念图工作流' },
   ],
 };
+
+// IP 形象集中配置：以后换图只改这里(把新图放进 public/ 再填路径即可)
+export const ip = {
+  // 3D IP 头肩图(现有素材, 主讲人/头像/页面通用, 也是全身图的兜底)
+  portrait: '/ip-pm.webp',
+  // 全身站立立绘: 有值则语音主讲人用"全身直立"呈现, 留空则用 portrait。
+  //   示例: fullBody: '/ip-fullbody.webp'
+  fullBody: '',
+  // 主体信息(主讲人卡片展示)
+  name: '瞿达炎',
+  role: '产品经理',
+};
