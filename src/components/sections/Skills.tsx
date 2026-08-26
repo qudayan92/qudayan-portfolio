@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { skills } from '@/lib/profile';
+import { ShinyText } from '@/components/motion/ShinyText';
 
 const groupLabel: Record<string, string> = {
   '产品': '产品方法论',
@@ -19,7 +20,7 @@ export function Skills() {
       <div className="mx-auto max-w-6xl px-6">
         <p className="eyebrow">Skills · 技能</p>
         <h2 className="mt-3 text-3xl md:text-5xl font-semibold tracking-tight">
-          工具与方法论<span className="text-gradient">两手抓</span>。
+          工具与方法论<ShinyText text="两手抓" color="#c4b5fd" shineColor="#f0abfc" spread={130} speed={3} />。
         </h2>
 
         <div className="mt-10 grid md:grid-cols-2 gap-6">

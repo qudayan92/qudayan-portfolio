@@ -1,5 +1,6 @@
 import { me, education } from '@/lib/profile';
 import { Reveal } from '@/components/motion/Reveal';
+import { ShinyText } from '@/components/motion/ShinyText';
 import { Sparkles } from 'lucide-react';
 
 export function About() {
@@ -9,7 +10,8 @@ export function About() {
         <Reveal>
           <p className="eyebrow">About · 关于我</p>
           <h2 className="mt-3 text-3xl md:text-5xl font-semibold tracking-tight">
-            设计师的眼睛，<span className="text-gradient">产品的脑子</span>。
+            设计师的眼睛，<ShinyText text="产品的脑子" color="#c4b5fd" shineColor="#f0abfc" spread={130} speed={3} />
+            。
           </h2>
         </Reveal>
 

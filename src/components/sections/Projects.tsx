@@ -1,5 +1,6 @@
 import { projects } from '@/lib/profile';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
+import { ShinyText } from '@/components/motion/ShinyText';
 
 const categoryStyle: Record<
   string,
@@ -32,7 +33,7 @@ export function Projects() {
           <div>
             <p className="eyebrow">Projects · 项目集</p>
             <h2 className="mt-3 text-3xl md:text-5xl font-semibold tracking-tight">
-              做过的一些<span className="text-gradient">代表作</span>。
+              做过的一些<ShinyText text="代表作" color="#c4b5fd" shineColor="#f0abfc" spread={130} speed={3} />。
             </h2>
           </div>
         </div>

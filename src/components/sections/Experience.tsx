@@ -1,6 +1,7 @@
 import { experiences } from '@/lib/profile';
 import { Reveal } from '@/components/motion/Reveal';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
+import { ShinyText } from '@/components/motion/ShinyText';
 
 export function Experience() {
   return (
@@ -10,7 +11,7 @@ export function Experience() {
           <div>
             <p className="eyebrow">Experience · 工作经历</p>
             <h2 className="mt-3 text-3xl md:text-5xl font-semibold tracking-tight">
-              一路从<span className="text-gradient">设计师</span>走到产品。
+              一路从<ShinyText text="设计师" color="#c4b5fd" shineColor="#f0abfc" spread={130} speed={3} />走到产品。
             </h2>
           </div>
           <p className="hidden md:block text-sm text-neutral-500 max-w-xs text-right">

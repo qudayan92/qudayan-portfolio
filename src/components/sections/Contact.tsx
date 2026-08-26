@@ -1,6 +1,7 @@
 import { me } from '@/lib/profile';
 import { ContactForm } from '@/components/ai/ContactForm';
 import { Reveal } from '@/components/motion/Reveal';
+import { ShinyText } from '@/components/motion/ShinyText';
 
 export function Contact() {
   return (
@@ -27,7 +28,7 @@ export function Contact() {
 
             <p className="eyebrow relative">Contact · 联系</p>
             <h2 className="relative mt-3 text-3xl md:text-5xl font-semibold tracking-tight">
-              聊一个产品机会，或<span className="text-gradient">交个朋友</span>。
+              聊一个产品机会，或<ShinyText text="交个朋友" color="#c4b5fd" shineColor="#f0abfc" spread={130} speed={3} />。
             </h2>
             <p className="relative mt-4 max-w-2xl text-neutral-400 leading-relaxed">
               现在在看 <b className="text-white">{me.target.city}</b> 的产品经理机会，

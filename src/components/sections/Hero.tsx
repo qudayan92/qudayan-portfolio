@@ -5,6 +5,8 @@ import { me } from '@/lib/profile';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { HeroVisual } from '@/components/motion/HeroVisual';
+import { BlurText } from '@/components/motion/BlurText';
+import { ShinyText } from '@/components/motion/ShinyText';
 
 // 数字动画：从 0 计数到目标
 function useCountUp(target: number, started: boolean, duration = 1400) {
@@ -70,7 +72,21 @@ export function Hero() {
           <div className="relative">
             <motion.div {...fadeUp(0.02)} className="flex items-center gap-2 eyebrow">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent-400 animate-pulse-dot" />
-              {me.role} · {me.city}
+              {reduce ? (
+                <span>
+                  {me.role} · {me.city}
+                </span>
+              ) : (
+                <ShinyText
+                  text={`${me.role} · ${me.city}`}
+                  color="#9ca3af"
+                  shineColor="#22d3ee"
+                  spread={120}
+                  speed={3}
+                  direction="left"
+                  className="tracking-widest uppercase"
+                />
+              )}
             </motion.div>
 
             <motion.h1
@@ -78,8 +94,21 @@ export function Hero() {
               className="mt-6 text-5xl md:text-7xl font-semibold tracking-tight leading-[1.05]"
             >
               你好，我是 <span className="text-gradient">{me.name}</span>
-              <span className="block text-neutral-300 mt-2">—— 一个会做产品的设计师。</span>
             </motion.h1>
+
+            {reduce ? (
+              <p className="mt-2 block text-2xl md:text-4xl font-semibold tracking-tight leading-snug text-neutral-300">
+                —— 一个会做产品的设计师。
+              </p>
+            ) : (
+              <BlurText
+                text="—— 一个会做产品的设计师。"
+                animateBy="letters"
+                delay={45}
+                stepDuration={0.4}
+                className="mt-2 block text-2xl md:text-4xl font-semibold tracking-tight leading-snug text-neutral-300"
+              />
+            )}
 
             <motion.p
               {...fadeUp(0.2)}

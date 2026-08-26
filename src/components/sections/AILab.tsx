@@ -3,6 +3,7 @@ import { InterviewSimulator } from '@/components/ai/InterviewSimulator';
 import { BlogIdeas } from '@/components/ai/BlogIdeas';
 import { GrowthMetrics } from '@/components/ai/GrowthMetrics';
 import { Reveal } from '@/components/motion/Reveal';
+import { ShinyText } from '@/components/motion/ShinyText';
 
 export function AILab() {
   return (
@@ -17,7 +18,7 @@ export function AILab() {
             </span>
           </div>
           <h2 className="mt-3 text-3xl md:text-5xl font-semibold tracking-tight">
-            网站<span className="text-gradient">自己会动</span>。
+            网站<ShinyText text="自己会动" color="#c4b5fd" shineColor="#f0abfc" spread={130} speed={3} />。
           </h2>
           <p className="mt-4 max-w-2xl text-neutral-400">
             这一节由 DeepSeek 实时驱动。所有 API 调用走服务端（你的 Key 不暴露给前端），流式响应，逐字生成。失败有兜底，限频保护。
