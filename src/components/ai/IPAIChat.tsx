@@ -55,6 +55,11 @@ export function IPAIChat() {
     if (open) setUnread(false);
   }, [open]);
 
+  // 通知外界(IP 主讲人)AI 聊天是否打开，让主讲人随聊天一起出现
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('ip:chat', { detail: { active: open } }));
+  }, [open]);
+
   const send = async (text: string) => {
     const trimmed = (text ?? '').trim();
     if (!trimmed || state === 'loading' || state === 'streaming') return;

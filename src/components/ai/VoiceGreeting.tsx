@@ -29,6 +29,8 @@ export function VoiceGreeting() {
   const [speaking, setSpeaking] = useState(false);
   // 进入页面时自动"站"出来介绍（约 9s，之后随鼠标悬停/播报再出现）
   const [introduced, setIntroduced] = useState(false);
+  // AI 聊天打开时，IP 主讲人也一起出现
+  const [chatActive, setChatActive] = useState(false);
   const reduce = useReducedMotion();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -39,6 +41,13 @@ export function VoiceGreeting() {
     setIntroduced(true);
     const t = window.setTimeout(() => setIntroduced(false), 9000);
     return () => window.clearTimeout(t);
+  }, []);
+
+  // 监听 AI 聊天开合（IPAIChat 派发 ip:chat），让主讲人随聊天出现
+  useEffect(() => {
+    const on = (e: Event) => setChatActive(Boolean((e as CustomEvent).detail?.active));
+    window.addEventListener('ip:chat', on as EventListener);
+    return () => window.removeEventListener('ip:chat', on as EventListener);
   }, []);
 
   // 读取持久化的静音偏好
@@ -177,7 +186,7 @@ export function VoiceGreeting() {
   };
 
   // 独立站立的 IP 形象：活泼睿智，漂浮发光，并随播报展示介绍文本
-  const showPanel = introduced || open || speaking;
+  const showPanel = introduced || open || speaking || chatActive;
 
   return (
     <>
