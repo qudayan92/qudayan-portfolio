@@ -27,10 +27,19 @@ export function VoiceGreeting() {
   const [open, setOpen] = useState(false);
   const [muted, setMuted] = useState(false);
   const [speaking, setSpeaking] = useState(false);
+  // 进入页面时自动"站"出来介绍（约 9s，之后随鼠标悬停/播报再出现）
+  const [introduced, setIntroduced] = useState(false);
   const reduce = useReducedMotion();
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
+
+  // 页面加载后自动展现 IP 主讲人，一段时间后收起（不遮拦后续内容）
+  useEffect(() => {
+    setIntroduced(true);
+    const t = window.setTimeout(() => setIntroduced(false), 9000);
+    return () => window.clearTimeout(t);
+  }, []);
 
   // 读取持久化的静音偏好
   useEffect(() => {
@@ -168,7 +177,7 @@ export function VoiceGreeting() {
   };
 
   // 独立站立的 IP 形象：活泼睿智，漂浮发光，并随播报展示介绍文本
-  const showPanel = open || speaking;
+  const showPanel = introduced || open || speaking;
 
   return (
     <>
